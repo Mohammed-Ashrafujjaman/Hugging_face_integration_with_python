@@ -20,7 +20,21 @@ class guiApp(BaseWindow):
     # ---------------- GUI LAYOUT ----------------
     def build_gui(self):
         # This whole GUI build by Grid layout. 
-        # menu will be added by pujan
+        # Create the main menubar
+        menubar = tk.Menu(self.root)
+
+        # Create the "File" menu dropdown
+        file_menu = tk.Menu(menubar, tearoff=0)
+        file_menu.add_command(label="Exit", command=self._exit_app)
+        menubar.add_cascade(label="File", menu=file_menu)
+
+        # Create the "Help" menu dropdown
+        help_menu = tk.Menu(menubar, tearoff=0)
+        help_menu.add_command(label="OOP Explanation")
+        menubar.add_cascade(label="Help", menu=help_menu)
+
+        # Attach menubar to the root window
+        self.root.config(menu=menubar)
         
         # Top Frame
         # It holds two more frame, one for selecting AI model and another for showing names of AI models
@@ -154,12 +168,34 @@ class guiApp(BaseWindow):
         # pujan will do it
 
     def _clear_output(self):
-        pass
-        # pujan will do it
+        self.output_text.delete("1.0", "end")
 
     def _show_model_info(self):
-        pass
-        # pujan will do it
+        
+        selected_model = self.input_type.get()
+    
+        self.info_text.delete("1.0", "end")
+
+        if selected_model == "Generative AI Model":
+            info = (
+                "Model: google/flan-t5-small\n\n"
+                "Type: Generative Text-to-Text Transformer\n"
+                "Description: A small variant of the FLAN-T5 model fine-tuned for various text generation tasks.\n"
+                "Use Case: Performs tasks like summarization, translation, question answering, and more."
+                "Limitations: Limited reasoning power compared to larger models, may produce biased or inaccurate text and cannot provide knowledge beyond its training data."
+            )
+        elif selected_model == "Image Classifier AI Model":
+            info = (
+                "Model: google/vit-base-patch16-224\n\n"
+                "Type: Image Classification\n"
+                "Description: Vision Transformer (ViT) model trained on ImageNet-21k and fine-tuned on ImageNet-1k.\n"
+                "Use Case: Classifies images into thousands of possible object categories."
+                "Limitations: Requires significant compute resources, less effective on noisy/low-resolution images and limited to classification (not detection or segmentation)."
+            )
+        else:
+            info = "No model selected."
+
+        self.info_text.insert("1.0", info)
         
     def _show_explanations(self):
         pass
@@ -168,6 +204,9 @@ class guiApp(BaseWindow):
     def _run_models(self):
         pass
         # Al-amin will do it
+
+    def _exit_app(self):
+        self.root.quit()
    
 """
 References:
@@ -175,6 +214,15 @@ for combobox:
 https://www.pythontutorial.net/tkinter/tkinter-combobox/
 for LabelFrame:
 https://www.pythontutorial.net/tkinter/tkinter-labelframe/
+for menubar:
+https://www.pythontutorial.net/tkinter/tkinter-menu/
+for Text widget (multi-line text area for displaying info):
+https://www.pythontutorial.net/tkinter/tkinter-text/
+https://tkdocs.com/tutorial/text.html
+for Buttons (to trigger commands):
+https://www.pythontutorial.net/tkinter/tkinter-button/
+for Handling events & commands in Tkinter:
+https://effbot.org/tkinterbook/tkinter-events-and-bindings.htm
 
 
 """
