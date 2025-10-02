@@ -159,9 +159,15 @@ class guiApp(BaseWindow):
         self.root().grid_rowconfigure(3, weight=1)
         self.root().grid_columnconfigure(0, weight=1)
 
-    def _toggle_input(self):
-        pass
-        # Imtiaz will do it
+# Imtiaz
+def _toggle_input(self):
+        if self.input_type.get() == "Image Classifier AI Model":
+            self.text_box.grid_remove()
+            self._img_row.grid()
+        else:
+            self._img_row.grid_remove()
+            self.text_box.grid()
+        self._render_model_info() # refresh model info
 
     def _choose_image(self):
         pass
