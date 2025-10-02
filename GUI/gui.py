@@ -164,8 +164,10 @@ class guiApp(BaseWindow):
         # Imtiaz will do it
 
     def _choose_image(self):
-        pass
-        # pujan will do it
+        path = filedialog.askopenfilename(title="Choose an image",
+                                          filetypes=[("Image files", "*.jpg *.jpeg *.png *.bmp *.gif")])
+        if path:
+            self.img_path.set(path)
 
     def _clear_output(self):
         self.output_text.delete("1.0", "end")
