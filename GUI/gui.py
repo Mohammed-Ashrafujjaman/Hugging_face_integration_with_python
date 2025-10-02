@@ -197,13 +197,56 @@ class guiApp(BaseWindow):
 
         self.info_text.insert("1.0", info)
         
-    def _show_explanations(self):
-        pass
+    def _show_OOP_explanations(self):
+     explanation = """Our Implementation shows Object-Oriented Programming (OOP):
+
+      - Class: For GUI (MainWindow) and for model wrappers in AI_models.
+      - Object: Instances are created when we run on the GUI or load model, e.g., bert = HuggingFaceModel('bert-base-uncased').
+      > Attributes & Methods: Every class has attributes (model name, device) and methods (load, predict).
+      - Inheritance: Various model classes inherit from a BaseModelWrapper so they have some of the same methods.
+      - Polymorphism: The GUI rings model.predict(text) and it’s model agnostic.
+      - Encapsulation: Expose a simple interface and hide the complexity (e.g., the tokenizers, device configs) away from user methods.
+      - Abstraction: The GUI works only with high-level methods (load_model, predict); it does not worry about Hugging Face internals.
+      - Composition: The MainWindow is a container of other objects (such as ModelManager) and this separates parts from each other.
+
+    Mini Example:
+     class BaseModelWrapper:
+         def predict(self, text: str):
+            raise NotImplementedError
+
+     class TextModel(BaseModelWrapper):
+         def predict(self, text):
+           return 'Prediction result'
+
+   Here, both of the classes have the same interface, whereas each may implement predict differently.
+
+   OOP, all in all, makes our project modular, reusable, and very easy to extend.
+   """
+
+    try:
+        from tkinter import messagebox
+        messagebox.showinfo("OOP Explanation", explanation)
+    except:
+        print(explanation)
+
         # Al-amin will do it
 
     def _run_models(self):
-        pass
-        # Al-amin will do it
+        in_type = self.input_type.get().lower()
+        if in_type == "Generative AI Model".lower():
+            text = self.text_box.get("1.0", "end").strip()
+            if not text:
+                raise ValueError("Please enter some text.")
+            res = self.run_mini_generative_AI(text)
+            self.output_text.insert("end", f"[Text Model Output]\\n{res}\\n\\n")
+        elif in_type == "Image Classifier AI Model".lower():
+            path = self.img_path.get().strip()
+            if not path:
+                raise ValueError("Please choose an image.")
+            res = self.run_image_classifier(path)
+            self.output_text.insert("end", f"[Image Model Output]\\n{res}\\n\\n")
+        else:
+            raise ValueError("Unsupported input type.")
 
     def _exit_app(self):
         self.root.quit()
@@ -223,6 +266,7 @@ for Buttons (to trigger commands):
 https://www.pythontutorial.net/tkinter/tkinter-button/
 for Handling events & commands in Tkinter:
 https://effbot.org/tkinterbook/tkinter-events-and-bindings.htm
-
+for explanation (OOP):
+https://www.geeksforgeeks.org/interview-prep/object-oriented-programming-oop-tutorial/
 
 """
