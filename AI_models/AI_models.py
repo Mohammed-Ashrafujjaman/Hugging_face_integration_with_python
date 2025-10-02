@@ -39,6 +39,30 @@ if __name__ == "__main__":
     print(img_output[0]["label"])
     
     # End of Al-Amin’s part
+    
+       # ---------------- Imtiaz’s Part ----------------
+    def _mini_generative_AI_pipeline(self, modelName):
+        # Create HuggingFace generative AI pipeline
+        tokenizer = T5Tokenizer.from_pretrained(modelName, legacy=False)
+        model = T5ForConditionalGeneration.from_pretrained(modelName)
+        return tokenizer, model
+    
+    def get_genAI_model_name(self):
+        # Return the name of the generative AI model
+        return self._genAI_modelName
+    
+    def run_mini_generative_AI(self, inputText):
+        # Run text generation on given input
+        input_ids = self.genAITokenizer(inputText, return_tensors="pt").input_ids
+        outputs = self.genAIModel.generate(input_ids, max_new_tokens=50)
+        return self.genAITokenizer.decode(outputs[0], skip_special_tokens=True)
+
+
+    # Imtiaz → testing generative AI
+    output = AIs.run_mini_generative_AI("Translate English to German: I love programming.")
+    print(output)
+    
+    # End of Imtiaz’s part
 
 """
 REFERENCES
