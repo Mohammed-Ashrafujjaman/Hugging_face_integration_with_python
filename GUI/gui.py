@@ -27,8 +27,8 @@ class guiApp(BaseWindow,AIModels):
     """Inheritance: GUI (BaseWindow)"""
     def __init__(self):
         BaseWindow.__init__(self)
-        messagebox.showinfo("Welcome!",information.show_initial_message())
         AIModels.__init__(self)
+        self.run_model_flag_gen_AI = True
         
         
 
@@ -110,9 +110,16 @@ class guiApp(BaseWindow,AIModels):
 
         # Text Box
         # Text input for Generative AI 
-        self.text_box = tk.Text(self.mid, height=3)
-        self.text_box.insert("1.0", "Type some text here. Any question, Any info...")
+        self.placeholder = "Type some text here. Any question, Any info..."
+         
+        # Create Text widget
+        self.text_box = tk.Text(self.mid, height=3, fg='gray')
+        self.text_box.insert("1.0", self.placeholder)
         self.text_box.grid(row=0, column=0, sticky="nsew")
+        
+        # Bind focus in/out events
+        self.text_box.bind("<FocusIn>", self._clear_placeholder)
+        self.text_box.bind("<FocusOut>", self._add_placeholder)
 
         # Image path
         # It will take image path for image classification
@@ -168,7 +175,7 @@ class guiApp(BaseWindow,AIModels):
         
         # This button clear the output panel 
         tk.Button(bottom_layer, text="Clear Output", command=self._clear_output).grid(row=0, column=1, padx=5)
-        tk.Button(bottom_layer, text="Explain OOP Usage", command=self._show_model_explanations).grid(row=0, column=2, padx=5) 
+        tk.Button(bottom_layer, text="More about AI Model", command=self._show_model_explanations).grid(row=0, column=2, padx=5) 
         
 
         # Configure resizing the grid for overall GUI
@@ -193,6 +200,18 @@ class guiApp(BaseWindow,AIModels):
 
     def _clear_output(self):
         self.output_text.delete("1.0", "end")
+        
+    def _clear_placeholder(self, event):
+        current_text = self.text_box.get("1.0", tk.END).strip()
+        if current_text == self.placeholder:
+            self.text_box.delete("1.0", tk.END)
+            self.text_box.config(fg='black')
+
+    def _add_placeholder(self, event):
+        current_text = self.text_box.get("1.0", tk.END).strip()
+        if not current_text:
+            self.text_box.insert("1.0", self.placeholder)
+            self.text_box.config(fg='gray')
 
     def _show_model_info(self):
         selected_model = self.input_type.get()
@@ -212,19 +231,25 @@ class guiApp(BaseWindow,AIModels):
     
 
     def _run_models(self):
+        
+        if self.run_model_flag_gen_AI == True:
+            messagebox.showwarning("AI warning!","AI does not always produce information correctly.")
+            self.run_model_flag_gen_AI = False
+        
         in_type = self.input_type.get().lower()
         if in_type == "Generative AI Model".lower():
             text = self.text_box.get("1.0", "end").strip()
             if not text:
                 messagebox.showerror("Error!","Please enter some text.")
             res = self.run_generative_AI(text)
-            self.output_text.insert("end", f"[Generative AI Model's output]\n{res}\n\n")
+            self.output_text.insert("end", f"Generative AI Model's output:\n{res}\n\n")
         elif in_type == "Image Classifier AI Model".lower():
+            self._clear_output()
             img_path = self.img_path.get().strip()
             if not img_path:
                 messagebox.showerror("Error!","Please select an image file.")
             res = self.run_image_classifier(img_path)
-            self.output_text.insert("end", f"[Image Model Output]\n{res}\n\n")
+            self.output_text.insert("end", f"Image Model's Output:\n{res[0]['label']} : {float(res[0]['score'])*100}%\n{res[1]['label']} : {float(res[1]['score'])*100}%\n{res[2]['label']} : {float(res[2]['score'])*100}%\n")
             ImageViewer.show(img_path)
         else:
             messagebox.showerror("Error!","Please select a model.")

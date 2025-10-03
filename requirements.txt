@@ -1,10 +1,8 @@
-Packages needed:
-    transformers
-    huggingface_hub
-    requests
-    Pillow
-    soundfile / pydub (if audio)
-    torch
-    Tkinter is built in.
-    sentencepiece
-    protobuf
+transformers
+huggingface_hub
+requests
+Pillow
+torch
+sentencepiece
+protobuf
+hf_xet

@@ -75,53 +75,46 @@ class information():
      
     
     def show_OOP_explanations():
-        explanation = """Our Implementation shows Object-Oriented Programming (OOP):
+        explanation = (
+            "Our Implementation shows Object-Oriented Programming (OOP):\n"
 
-            - Class: For GUI (MainWindow) and for model wrappers in AI_models.
-            - Object: Instances are created when we run on the GUI or load model, e.g., bert = HuggingFaceModel('bert-base-uncased').
-            > Attributes & Methods: Every class has attributes (model name, device) and methods (load, predict).
-            - Inheritance: Various model classes inherit from a BaseModelWrapper so they have some of the same methods.
-            - Polymorphism: The GUI rings model.predict(text) and it's model agnostic.
-            - Encapsulation: Expose a simple interface and hide the complexity (e.g., the tokenizers, device configs) away from user methods.
-            - Abstraction: The GUI works only with high-level methods (load_model, predict); it does not worry about Hugging Face internals.
-            - Composition: The MainWindow is a container of other objects (such as ModelManager) and this separates parts from each other.
+            "- Class: For GUI (MainWindow) and for model wrappers in AI_models.\n"
+            "- Object: Instances are created when we run on the GUI or load model, e.g., bert = HuggingFaceModel('bert-base-uncased').\n"
+            "- Attributes & Methods: Every class has attributes (model name, device) and methods (load, predict).\n"
+            "- Inheritance: Various model classes inherit from a BaseModelWrapper so they have some of the same methods.\n"
+            "- Polymorphism: The GUI rings model.predict(text) and it's model agnostic.\n"
+            "- Encapsulation: Expose a simple interface and hide the complexity (e.g., the tokenizers, device configs) away from user methods.\n"
+            "- Abstraction: The GUI works only with high-level methods (load_model, predict); it does not worry about Hugging Face internals.\n"
+            "- Composition: The MainWindow is a container of other objects (such as ModelManager) and this separates parts from each other.\n"
 
-            Mini Example:
-            class BaseModelWrapper:
-                def predict(self, text: str):
-                    raise NotImplementedError
-
-            class TextModel(BaseModelWrapper):
-                def predict(self, text):
-                return 'Prediction result'
-
-            Here, both of the classes have the same interface, whereas each may implement predict differently.
-
-            OOP, all in all, makes our project modular, reusable, and very easy to extend.
-        """
+            "OOP, all in all, makes our project modular, reusable, and very easy to extend.\n"
+        )
+        return explanation
+    
+    
     def show_required_packages():
-        packages_info = '''
-        Please install this packages for run this software.
-        Packages needed:
-            transformers
-            huggingface_hub
-            Pillow
-            torch
-            Tkinter 
-            sentencepiece
-            protobuf
-        
-        "pip install transformers huggingface_hub Pillow torch sentencepiece protobuf"
-        
-        upper command will install all the package needed to run this project.
-            '''
+        packages_info = (
+        "Please install this packages for run this software.\n"
+        "Packages needed:\n"
+        "   transformers\n"
+        "   huggingface_hub\n"
+        "   Pillow\n"
+        "   torch\n"
+        "   Tkinter\n" 
+        "   sentencepiece\n"
+        "   protobuf\n\n"
+        "pip install transformers huggingface_hub Pillow torch sentencepiece protobuf\n"
+        "Upper command will install all the package needed to run this project."
+        )
         return packages_info
     
     def show_initial_message():
-        info = """
-        Hello Dear user!
-        If you are running this project for the first time it will take sometime to download the models. You will see all the progress in terminal windows.
-        We kindly request you to be patient.
-        Note: Download speed may vary depending on your internet connection.
-        """
+        info = (
+        "Hello Dear user!\n"
+        "If you are running this project for the first time it will take sometime to download the models. You will see all the progress in terminal windows.\n"
+        "We kindly request you to be patient.\n"
+        "Note: Download speed may vary depending on your internet connection.\n\n"
+        "pip install -r requirements.txt\n"
+        "Type the upper line in terminal to install all the required packages."
+        )
         return info
