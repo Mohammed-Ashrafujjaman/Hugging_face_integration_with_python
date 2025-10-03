@@ -19,6 +19,7 @@ class AIModels:
         # This one is for generative AI by Google
         self._genAI_modelName = "google/flan-t5-base"
         
+        # creating pipeline for both of the AI model
         self.ImgClassifier = self._image_classification_pipeline(self._imgClassifier_modelName)
         self.genAITokenizer, self.genAIModel = self._generative_AI_pipeline(self._genAI_modelName)
         

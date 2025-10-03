@@ -182,40 +182,54 @@ class guiApp(BaseWindow,AIModels):
         self.root().grid_rowconfigure(3, weight=1)
         self.root().grid_columnconfigure(0, weight=1)
 
+
+    # this toggle input for Generative AI input text and image AI model's file input
     def _toggle_input(self):
-        print(self.input_type.get())
+        # If image classification model is selected then text input hide
         if self.input_type.get() == "Image Classifier AI Model":
             self.text_box.grid_remove()
             self._img_row.grid()
         else:
+            # is generative AI model selected file input hide
             self._img_row.grid_remove()
             self.text_box.grid()
-        self._show_model_info() # refresh model info
+        # refresh model info base on selected model    
+        self._show_model_info() 
 
     def _choose_image(self):
+        # choosing an image from the pc for image classificaion
         path = filedialog.askopenfilename(title="Choose an image",
                                           filetypes=[("Image files", "*.jpg *.jpeg *.png *.bmp *.gif")])
         if path:
             self.img_path.set(path)
 
+    # clearing output panel for next output based on call
     def _clear_output(self):
         self.output_text.delete("1.0", "end")
         
+    
+    
+    # If mouse click on the text input It will clear the placeholder text
     def _clear_placeholder(self, event):
         current_text = self.text_box.get("1.0", tk.END).strip()
         if current_text == self.placeholder:
             self.text_box.delete("1.0", tk.END)
             self.text_box.config(fg='black')
 
+    # this is simple placeholder in the text imput field
+    # if mouse click on the anywhere other then the text input field then the placeholder text will show
     def _add_placeholder(self, event):
         current_text = self.text_box.get("1.0", tk.END).strip()
         if not current_text:
             self.text_box.insert("1.0", self.placeholder)
             self.text_box.config(fg='gray')
 
+
+    # this is to show model info briefly in the gui right beside the outout panel
     def _show_model_info(self):
         selected_model = self.input_type.get()
         self.info_text.delete("1.0", "end")
+        # it shows info based on selected model from the toggle menu
         if selected_model == "Generative AI Model":
             info = information.show_brief_gen_ai_info()
         elif selected_model == "Image Classifier AI Model":
@@ -225,29 +239,39 @@ class guiApp(BaseWindow,AIModels):
 
         self.info_text.insert("1.0", info)
      
+    # this function explain all the object orriented programming done in this project
+    # it is in menu (help->oop explanation)
+    # it is getting the info from another python file in utils folder(utils->all_information.py)
     def _show_OOP_explanations(self): 
         explanation = information.show_OOP_explanations()
         messagebox.showinfo("OOP Explanation", explanation)
     
-
+    
+    # this fucntion run this AI model based on the selected model
     def _run_models(self):
-        
+        # it is simple warning to say that AI model might not produce actual/correct information
         if self.run_model_flag_gen_AI == True:
             messagebox.showwarning("AI warning!","AI does not always produce information correctly.")
             self.run_model_flag_gen_AI = False
-        
+        # generative model (in case of fail run it show an error message)
         in_type = self.input_type.get().lower()
         if in_type == "Generative AI Model".lower():
             text = self.text_box.get("1.0", "end").strip()
+            if text == "Type some text here. Any question, Any info...":
+                messagebox.showerror("Error!","Please enter some text.")
+                return
             if not text:
                 messagebox.showerror("Error!","Please enter some text.")
+                return
             res = self.run_generative_AI(text)
             self.output_text.insert("end", f"Generative AI Model's output:\n{res}\n\n")
+        # Image AI model ( in case of fail run it show an error message)
         elif in_type == "Image Classifier AI Model".lower():
             self._clear_output()
             img_path = self.img_path.get().strip()
             if not img_path:
                 messagebox.showerror("Error!","Please select an image file.")
+                return
             res = self.run_image_classifier(img_path)
             self.output_text.insert("end", f"Image Model's Output:\n{res[0]['label']} : {float(res[0]['score'])*100}%\n{res[1]['label']} : {float(res[1]['score'])*100}%\n{res[2]['label']} : {float(res[2]['score'])*100}%\n")
             ImageViewer.show(img_path)
@@ -255,14 +279,17 @@ class guiApp(BaseWindow,AIModels):
             messagebox.showerror("Error!","Please select a model.")
         
     
+    # this function shows details info about model and there limitations as well
     def _show_model_explanations(self):
         selected_model = self.input_type.get()
         
         self.info_text.delete("1.0", "end")
         
+        # info about generative AI model
         if selected_model == "Generative AI Model":
             gen_AI_info = information.show_Gen_AI_model_explanations()
             messagebox.showinfo("Model Information: ", gen_AI_info)
+        # info about image classifier AI model
         elif selected_model == "Image Classifier AI Model":
             img_model_info = information.show_image_classifier_info()
             messagebox.showinfo("Model Information: ", img_model_info)
@@ -270,6 +297,7 @@ class guiApp(BaseWindow,AIModels):
             messagebox.showinfo("Info","No model selected!")
             
 
+    # software exit funciton(Menu:file->exit)
     def _exit_app(self):
         self.root.quit()
    

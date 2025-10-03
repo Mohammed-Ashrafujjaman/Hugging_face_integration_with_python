@@ -78,14 +78,13 @@ class information():
         explanation = (
             "Our Implementation shows Object-Oriented Programming (OOP):\n"
 
-            "- Class: For GUI (MainWindow) and for model wrappers in AI_models.\n"
-            "- Object: Instances are created when we run on the GUI or load model, e.g., bert = HuggingFaceModel('bert-base-uncased').\n"
-            "- Attributes & Methods: Every class has attributes (model name, device) and methods (load, predict).\n"
-            "- Inheritance: Various model classes inherit from a BaseModelWrapper so they have some of the same methods.\n"
-            "- Polymorphism: The GUI rings model.predict(text) and it's model agnostic.\n"
+            "- Class: For GUI (baseGuiWindows.py) and for model wrappers in AI_models.\n"
+            "- Object: Instances are created when we run on the GUI or load model, e.g., bert = HuggingFaceModel('vit-base-patch16-224').\n"
+            "- Attributes & Methods: Every class has attributes (model name) and methods (load pipeline, run).\n"
+            "- Inheritance: Various model classes(gui.py) inherit from baseGuiWindows and AI_Models so they have some of the same methods.\n"
             "- Encapsulation: Expose a simple interface and hide the complexity (e.g., the tokenizers, device configs) away from user methods.\n"
             "- Abstraction: The GUI works only with high-level methods (load_model, predict); it does not worry about Hugging Face internals.\n"
-            "- Composition: The MainWindow is a container of other objects (such as ModelManager) and this separates parts from each other.\n"
+            "- Composition: The MainWindow is a container of other objects (such as AI_Models.py) and this separates parts from each other.\n"
 
             "OOP, all in all, makes our project modular, reusable, and very easy to extend.\n"
         )
