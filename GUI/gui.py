@@ -7,21 +7,36 @@ Shaown Imtiaz - 396121
 Al-Amin Dhaly - 395230
 '''
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, filedialog, messagebox
 from GUI.baseGuiWindows import BaseWindow
 
+import sys
+import os
 
-class guiApp(BaseWindow):
+# Get the parent directory (Huging_face_integration_with_python/)
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
+    
+from AI_models.AI_models import AIModels
+from utils.all_information import information
+from utils.image import ImageViewer
+
+# multiple inheritance
+class guiApp(BaseWindow,AIModels):
     """Inheritance: GUI (BaseWindow)"""
     def __init__(self):
         BaseWindow.__init__(self)
+        messagebox.showinfo("Welcome!",information.show_initial_message())
+        AIModels.__init__(self)
+        
         
 
-    # ---------------- GUI LAYOUT ----------------
+    # GUI LAYOUT 
     def build_gui(self):
         # This whole GUI build by Grid layout. 
         # Create the main menubar
-        menubar = tk.Menu(self.root)
+        menubar = tk.Menu(self.root())
 
         # Create the "File" menu dropdown
         file_menu = tk.Menu(menubar, tearoff=0)
@@ -30,11 +45,11 @@ class guiApp(BaseWindow):
 
         # Create the "Help" menu dropdown
         help_menu = tk.Menu(menubar, tearoff=0)
-        help_menu.add_command(label="OOP Explanation")
+        help_menu.add_command(label="OOP Explanation", command=self._show_OOP_explanations)
         menubar.add_cascade(label="Help", menu=help_menu)
 
         # Attach menubar to the root window
-        self.root.config(menu=menubar)
+        self.root().config(menu=menubar)
         
         # Top Frame
         # It holds two more frame, one for selecting AI model and another for showing names of AI models
@@ -50,10 +65,10 @@ class guiApp(BaseWindow):
         tk.Label(topSubFrame1, text="Select Model:").grid(row=0, column=0, pady=5, sticky="w")
 
         # Tkinter's own variable holder library for dynamic input
-        self.input_type = tk.StringVar(value="Generative AI Model")
+        self.input_type = tk.StringVar(value="")
         # Combobox or dropdown menu box for selecting model
         
-        self.input_type_cb = ttk.Combobox(topSubFrame1, textvariable=self.input_type.get(), 
+        self.input_type_cb = ttk.Combobox(topSubFrame1, textvariable=self.input_type, 
                                           values=["Generative AI Model", "Image Classifier AI Model"],
                                           state="readonly", width=50)
         self.input_type_cb.grid(row=1, column=0, padx=6, sticky="w")
@@ -82,11 +97,11 @@ class guiApp(BaseWindow):
         self.model_b = tk.StringVar(value="Image Classifier") # Actual model name will go here after implementing one
         tk.Label(modelSubFrame2, text=self.model_b.get()).grid(row=0, column=1, padx=5, pady=5, sticky="w")
 
-       # Frame for input section ( Mid section for grid implementation)
-       # In this part User input Will be taken.
-       # One input will be for generative AI
-       # another will be for image selecting from users device
-       # These two input will be displayed according to selected model from the upper droudown menu
+        # Frame for input section ( Mid section for grid implementation)
+        # In this part User input Will be taken.
+        # One input will be for generative AI
+        # another will be for image selecting from users device
+        # These two input will be displayed according to selected model from the upper droudown menu
         self.mid = tk.LabelFrame(self.root(), text="Input", padx=10, pady=10)
         self.mid.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
 
@@ -151,8 +166,9 @@ class guiApp(BaseWindow):
         bottom_layer.grid_columnconfigure(0, weight=0)
         bottom_layer.grid_columnconfigure(1, weight=1)
         
+        # This button clear the output panel 
         tk.Button(bottom_layer, text="Clear Output", command=self._clear_output).grid(row=0, column=1, padx=5)
-        tk.Button(bottom_layer, text="Explain OOP Usage", command=self._show_explanations).grid(row=0, column=2, padx=5) 
+        tk.Button(bottom_layer, text="Explain OOP Usage", command=self._show_model_explanations).grid(row=0, column=2, padx=5) 
         
 
         # Configure resizing the grid for overall GUI
@@ -160,8 +176,14 @@ class guiApp(BaseWindow):
         self.root().grid_columnconfigure(0, weight=1)
 
     def _toggle_input(self):
-        pass
-        # Imtiaz will do it
+        print(self.input_type.get())
+        if self.input_type.get() == "Image Classifier AI Model":
+            self.text_box.grid_remove()
+            self._img_row.grid()
+        else:
+            self._img_row.grid_remove()
+            self.text_box.grid()
+        self._show_model_info() # refresh model info
 
     def _choose_image(self):
         path = filedialog.askopenfilename(title="Choose an image",
@@ -173,82 +195,55 @@ class guiApp(BaseWindow):
         self.output_text.delete("1.0", "end")
 
     def _show_model_info(self):
-        
         selected_model = self.input_type.get()
-    
         self.info_text.delete("1.0", "end")
-
         if selected_model == "Generative AI Model":
-            info = (
-                "Model: google/flan-t5-small\n\n"
-                "Type: Generative Text-to-Text Transformer\n"
-                "Description: A small variant of the FLAN-T5 model fine-tuned for various text generation tasks.\n"
-                "Use Case: Performs tasks like summarization, translation, question answering, and more."
-                "Limitations: Limited reasoning power compared to larger models, may produce biased or inaccurate text and cannot provide knowledge beyond its training data."
-            )
+            info = information.show_brief_gen_ai_info()
         elif selected_model == "Image Classifier AI Model":
-            info = (
-                "Model: google/vit-base-patch16-224\n\n"
-                "Type: Image Classification\n"
-                "Description: Vision Transformer (ViT) model trained on ImageNet-21k and fine-tuned on ImageNet-1k.\n"
-                "Use Case: Classifies images into thousands of possible object categories."
-                "Limitations: Requires significant compute resources, less effective on noisy/low-resolution images and limited to classification (not detection or segmentation)."
-            )
+            info = information.show_brief_img_classifier_info()
         else:
             info = "No model selected."
 
         self.info_text.insert("1.0", info)
-        
-    def _show_OOP_explanations(self):
-     explanation = """Our Implementation shows Object-Oriented Programming (OOP):
-
-      - Class: For GUI (MainWindow) and for model wrappers in AI_models.
-      - Object: Instances are created when we run on the GUI or load model, e.g., bert = HuggingFaceModel('bert-base-uncased').
-      > Attributes & Methods: Every class has attributes (model name, device) and methods (load, predict).
-      - Inheritance: Various model classes inherit from a BaseModelWrapper so they have some of the same methods.
-      - Polymorphism: The GUI rings model.predict(text) and it’s model agnostic.
-      - Encapsulation: Expose a simple interface and hide the complexity (e.g., the tokenizers, device configs) away from user methods.
-      - Abstraction: The GUI works only with high-level methods (load_model, predict); it does not worry about Hugging Face internals.
-      - Composition: The MainWindow is a container of other objects (such as ModelManager) and this separates parts from each other.
-
-    Mini Example:
-     class BaseModelWrapper:
-         def predict(self, text: str):
-            raise NotImplementedError
-
-     class TextModel(BaseModelWrapper):
-         def predict(self, text):
-           return 'Prediction result'
-
-   Here, both of the classes have the same interface, whereas each may implement predict differently.
-
-   OOP, all in all, makes our project modular, reusable, and very easy to extend.
-   """
-
-    try:
-        from tkinter import messagebox
+     
+    def _show_OOP_explanations(self): 
+        explanation = information.show_OOP_explanations()
         messagebox.showinfo("OOP Explanation", explanation)
-    except:
-        print(explanation)
-
-        # Al-amin will do it
+    
 
     def _run_models(self):
         in_type = self.input_type.get().lower()
         if in_type == "Generative AI Model".lower():
             text = self.text_box.get("1.0", "end").strip()
             if not text:
-                raise ValueError("Please enter some text.")
-            res = self.run_mini_generative_AI(text)
-            self.output_text.insert("end", f"[Text Model Output]\\n{res}\\n\\n")
+                messagebox.showerror("Error!","Please enter some text.")
+            res = self.run_generative_AI(text)
+            self.output_text.insert("end", f"[Generative AI Model's output]\n{res}\n\n")
         elif in_type == "Image Classifier AI Model".lower():
-            path = self.img_path.get().strip()
-            if not path:
-                raise ValueError("Please choose an image.")
-            res = self.run_image_classifier(path)
-            self.output_text.insert("end", f"[Image Model Output]\\n{res}\\n\\n")
+            img_path = self.img_path.get().strip()
+            if not img_path:
+                messagebox.showerror("Error!","Please select an image file.")
+            res = self.run_image_classifier(img_path)
+            self.output_text.insert("end", f"[Image Model Output]\n{res}\n\n")
+            ImageViewer.show(img_path)
         else:
-            raise ValueError("Unsupported input type.")
+            messagebox.showerror("Error!","Please select a model.")
+        
+    
+    def _show_model_explanations(self):
+        selected_model = self.input_type.get()
+        
+        self.info_text.delete("1.0", "end")
+        
+        if selected_model == "Generative AI Model":
+            gen_AI_info = information.show_Gen_AI_model_explanations()
+            messagebox.showinfo("Model Information: ", gen_AI_info)
+        elif selected_model == "Image Classifier AI Model":
+            img_model_info = information.show_image_classifier_info()
+            messagebox.showinfo("Model Information: ", img_model_info)
+        else:
+            messagebox.showinfo("Info","No model selected!")
+            
 
     def _exit_app(self):
         self.root.quit()
